@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-	[SerializeField] // Allows designer to change speed, while keeping it private to player (no other script can interfere with it)
+	public GameObject laserPrefab;
+
+	[SerializeField] // Allows designer to change speed in Unity, while keeping it private to player (no other script can interfere with it)
 	private float speed = 5.0f;
 
 	// Use this for initialization
@@ -15,6 +17,11 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		Movement();
+
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+			Instantiate(laserPrefab, transform.position + new Vector3(0, 0.84f, 0), Quaternion.identity);	
+		}
 	}
 
 	// How the user control player movement
