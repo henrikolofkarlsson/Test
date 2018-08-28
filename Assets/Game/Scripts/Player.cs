@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-	public GameObject laserPrefab;
+    [SerializeField]
+	private GameObject _laserPrefab;
+
+    [SerializeField]
+    private float _fireRate = 0.2f;
+    private float _canFire = 0;
 
 	[SerializeField] // Allows designer to change speed in Unity, while keeping it private to player (no other script can interfere with it)
-	private float speed = 5.0f;
+	private float _speed = 5.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -20,17 +25,26 @@ public class Player : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-			Instantiate(laserPrefab, transform.position + new Vector3(0, 0.84f, 0), Quaternion.identity);	
+            Shoot();
 		}
 	}
+
+    //Spawn lasers 
+    private void Shoot () {
+        if (Time.time > _canFire)
+        {
+            Instantiate(_laserPrefab, transform.position + new Vector3(0, 0.84f, 0), Quaternion.identity);
+            _canFire = Time.time + _fireRate;
+        }
+    }
 
 	// How the user control player movement
 	private void Movement () {
 		float horizontalInput = Input.GetAxis("Horizontal");
 		float verticalInput = Input.GetAxis("Vertical");
 
-		transform.Translate(Vector3.right * speed * horizontalInput * Time.deltaTime);
-		transform.Translate(Vector3.up * speed * verticalInput * Time.deltaTime);
+		transform.Translate(Vector3.right * _speed * horizontalInput * Time.deltaTime);
+		transform.Translate(Vector3.up * _speed * verticalInput * Time.deltaTime);
 
 		if (transform.position.y > 0)
 		{
