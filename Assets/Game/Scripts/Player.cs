@@ -6,23 +6,21 @@ public class Player : MonoBehaviour {
 
     [SerializeField]
 	private GameObject _laserPrefab;
-
     [SerializeField]
     private GameObject _tripleLaserPrefab;
-
     [SerializeField]
     private GameObject _playerExplosionPrefab;
+    [SerializeField]
+    private GameObject _ShieldGameObject;
 
     [SerializeField]
     private float _fireRate = 0.2f;
+    [SerializeField] // Allows designer to change speed in Unity, while keeping it private to player (no other script can interfere with it)
+    private float _speed = 5.0f;
 
     private float _canFire = 0;
-
     public bool canTripleShoot = false;
-
-	[SerializeField] // Allows designer to change speed in Unity, while keeping it private to player (no other script can interfere with it)
-	private float _speed = 5.0f;
-
+    public bool hasShield = false;
     public int lives = 3;
 
 	// Use this for initialization
@@ -75,7 +73,9 @@ public class Player : MonoBehaviour {
         }
         else if (powerupID == 2)
         {
-            // apply shield
+            hasShield = true;
+            _ShieldGameObject.SetActive(true);
+            StartCoroutine(PowerDownRoutine(powerupID));
         }
 
     }
@@ -95,7 +95,8 @@ public class Player : MonoBehaviour {
         }
         else if (powerupID == 2)
         {
-            // apply shield
+            hasShield = false;
+            _ShieldGameObject.SetActive(false);
         }
 
     }
@@ -130,6 +131,12 @@ public class Player : MonoBehaviour {
     }
 
     public void Damage () {
+        if (hasShield) {
+            hasShield = false;
+            _ShieldGameObject.SetActive(false);
+            return;
+        }
+
         lives--;
         if (lives < 1)
         {
