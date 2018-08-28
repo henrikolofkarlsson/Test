@@ -8,8 +8,14 @@ public class Player : MonoBehaviour {
 	private GameObject _laserPrefab;
 
     [SerializeField]
+    private GameObject _tripleLaserPrefab;
+
+    [SerializeField]
     private float _fireRate = 0.2f;
+
     private float _canFire = 0;
+
+    public bool canTripleShoot = false;
 
 	[SerializeField] // Allows designer to change speed in Unity, while keeping it private to player (no other script can interfere with it)
 	private float _speed = 5.0f;
@@ -25,7 +31,10 @@ public class Player : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-            Shoot();
+            if (canTripleShoot)
+                tripleShoot();
+            else
+                Shoot();
 		}
 	}
 
@@ -36,6 +45,26 @@ public class Player : MonoBehaviour {
             Instantiate(_laserPrefab, transform.position + new Vector3(0, 0.84f, 0), Quaternion.identity);
             _canFire = Time.time + _fireRate;
         }
+    }
+
+    //Spawn three lasers
+    private void tripleShoot () {
+        if (Time.time > _canFire)
+        {
+            Instantiate(_tripleLaserPrefab, transform.position + new Vector3(-0.55f, 0, 0), Quaternion.identity);
+        }
+    }
+
+    // Turn on tripleshoot and start coroutine to turn it off in time n
+    public void TripleShotPowerUpOn () {
+        canTripleShoot = true;
+        StartCoroutine(TripleShotPowerDownRoutine());
+    }
+
+    // Turn of tripleshot after n seconds
+    IEnumerator TripleShotPowerDownRoutine () {
+        yield return new WaitForSeconds(5.0f);
+        canTripleShoot = false;
     }
 
 	// How the user control player movement
