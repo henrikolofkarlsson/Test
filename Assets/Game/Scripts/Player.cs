@@ -11,6 +11,9 @@ public class Player : MonoBehaviour {
     private GameObject _tripleLaserPrefab;
 
     [SerializeField]
+    private GameObject _playerExplosionPrefab;
+
+    [SerializeField]
     private float _fireRate = 0.2f;
 
     private float _canFire = 0;
@@ -19,6 +22,8 @@ public class Player : MonoBehaviour {
 
 	[SerializeField] // Allows designer to change speed in Unity, while keeping it private to player (no other script can interfere with it)
 	private float _speed = 5.0f;
+
+    public int lives = 3;
 
 	// Use this for initialization
 	void Start () {
@@ -55,42 +60,82 @@ public class Player : MonoBehaviour {
         }
     }
 
-    // Turn on tripleshoot and start coroutine to turn it off in time n
-    public void TripleShotPowerUpOn () {
-        canTripleShoot = true;
-        StartCoroutine(TripleShotPowerDownRoutine());
+    // Turn on powerup and start coroutine to turn it off in 5 s
+    public void PowerUpOn(int powerupID)
+    {
+        if (powerupID == 0)
+        {
+            canTripleShoot = true;
+            StartCoroutine(PowerDownRoutine(powerupID));
+        }
+        else if (powerupID == 1)
+        {
+            _speed = 8.0f;
+            StartCoroutine(PowerDownRoutine(powerupID));
+        }
+        else if (powerupID == 2)
+        {
+            // apply shield
+        }
+
     }
 
-    // Turn of tripleshot after n seconds
-    IEnumerator TripleShotPowerDownRoutine () {
+    // Turn of powerup after 5 seconds
+    IEnumerator PowerDownRoutine(int powerupID)
+    {
         yield return new WaitForSeconds(5.0f);
-        canTripleShoot = false;
+
+        if (powerupID == 0)
+        {
+            canTripleShoot = false;
+        }
+        else if (powerupID == 1)
+        {
+            _speed = 5.0f;
+        }
+        else if (powerupID == 2)
+        {
+            // apply shield
+        }
+
     }
 
-	// How the user control player movement
-	private void Movement () {
-		float horizontalInput = Input.GetAxis("Horizontal");
-		float verticalInput = Input.GetAxis("Vertical");
+    // How the user control player movement
 
-		transform.Translate(Vector3.right * _speed * horizontalInput * Time.deltaTime);
-		transform.Translate(Vector3.up * _speed * verticalInput * Time.deltaTime);
+    private void Movement()
+    {
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
 
-		if (transform.position.y > 0)
-		{
-			transform.position = new Vector3(transform.position.x, 0, 0);
-		}
-		else if (transform.position.y < -4.2f)
-		{
-			transform.position = new Vector3(transform.position.x, -4.2f, 0);
-		}
+        transform.Translate(Vector3.right * _speed * horizontalInput * Time.deltaTime);
+        transform.Translate(Vector3.up * _speed * verticalInput * Time.deltaTime);
 
-		if (transform.position.x > 10.6)
-		{
-			transform.position = new Vector3(-10.5f, transform.position.y, 0);
-		}
-		else if (transform.position.x < -10.6)
-		{
-			transform.position = new Vector3(10.5f, transform.position.y, 0);
-		}
-	}
+        if (transform.position.y > 0)
+        {
+            transform.position = new Vector3(transform.position.x, 0, 0);
+        }
+        else if (transform.position.y < -4.2f)
+        {
+            transform.position = new Vector3(transform.position.x, -4.2f, 0);
+        }
+
+        if (transform.position.x > 10.6)
+        {
+            transform.position = new Vector3(-10.5f, transform.position.y, 0);
+        }
+        else if (transform.position.x < -10.6)
+        {
+            transform.position = new Vector3(10.5f, transform.position.y, 0);
+        }
+    }
+
+    public void Damage () {
+        lives--;
+        if (lives < 1)
+        {
+            Instantiate(_playerExplosionPrefab, transform.position, Quaternion.identity);
+            Destroy(this.gameObject);
+        }
+
+    }
 }
