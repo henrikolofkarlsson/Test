@@ -26,6 +26,7 @@ public class Player : MonoBehaviour {
     private UIManager _UIManager; // To hold connection to uimanager script
     private GameManager _gameManager;
     private SpawnManager _spawnManager;
+    private AudioSource _audiosource;
 
 	// Use this for initialization
 	void Start () {
@@ -35,16 +36,19 @@ public class Player : MonoBehaviour {
         // its UIManager script. Etc.
         _UIManager = GameObject.Find("Canvas").GetComponent<UIManager>();
 
-        _gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
-
         _spawnManager = GameObject.Find("Spawn Manager").GetComponent<SpawnManager>();
+
+        _audiosource = GetComponent<AudioSource>();
+
+        _gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
 
         if (_UIManager != null) // Always null check, to not crash of unable to find object
         {
             _UIManager.UpdateLives(lives);
         }
 
-        if (_spawnManager != null) {
+        if (_spawnManager != null) 
+        {
             _spawnManager.startSpawning();
         }
 
@@ -68,6 +72,7 @@ public class Player : MonoBehaviour {
         if (Time.time > _canFire)
         {
             Instantiate(_laserPrefab, transform.position + new Vector3(0, 0.84f, 0), Quaternion.identity);
+            _audiosource.Play();
             _canFire = Time.time + _fireRate;
         }
     }
@@ -77,6 +82,8 @@ public class Player : MonoBehaviour {
         if (Time.time > _canFire)
         {
             Instantiate(_tripleLaserPrefab, transform.position + new Vector3(-0.55f, 0, 0), Quaternion.identity);
+            _audiosource.Play();
+            _canFire = Time.time + _fireRate;
         }
     }
 

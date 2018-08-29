@@ -10,7 +10,11 @@ public class EnemyAI : MonoBehaviour {
     [SerializeField]
     private GameObject _explosionPrefab;
 
+    [SerializeField]
+    private AudioClip _clip;
+
     private UIManager _UIManager;
+
 
 	// Use this for initialization
 	void Start () {
@@ -32,6 +36,7 @@ public class EnemyAI : MonoBehaviour {
     // Handles collisions
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // if enemy collides with player this gets executed
         if (other.tag == "Player") {
             Player player = other.GetComponent<Player>();
 
@@ -42,9 +47,15 @@ public class EnemyAI : MonoBehaviour {
 
             // play explosion animation and destroy enemy object
             Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+
+            // play explosion sound by main camera (necessary to use playclipatpoint since we're
+            // destroying this gameobject right after.
+            AudioSource.PlayClipAtPoint(_clip, Camera.main.transform.position, 1f); 
+
             Destroy(this.gameObject);
         }
 
+        // if enemy gets hit by laser beam, this gets executed.
         else if (other.tag == "Laser") {
             if (other.transform.parent != null) // if laser has a parent, destroy it not to clutter memory
             {
@@ -55,6 +66,8 @@ public class EnemyAI : MonoBehaviour {
             // play explosion, increment score and destroy enemy object
             Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
             _UIManager.UpdateScore();
+
+            AudioSource.PlayClipAtPoint(_clip, Camera.main.transform.position, 1f);
             Destroy(this.gameObject);
         }
     }

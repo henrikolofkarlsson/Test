@@ -10,10 +10,9 @@ public class Powerup : MonoBehaviour {
     [SerializeField]
     private float speed = 3.0f;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
+
+    [SerializeField]
+    private AudioClip _clip;
 	
 	// Update is called once per frame
 	void Update () {
@@ -25,6 +24,7 @@ public class Powerup : MonoBehaviour {
         }
 	}
 
+    // Called on collison with other
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Player") {
@@ -37,7 +37,11 @@ public class Powerup : MonoBehaviour {
             {
                 player.PowerUpOn(powerupID);
             }
-                
+
+            // play power up sound by main camera (necessary to use playclipatpoint since we're
+            // destroying this gameobject right after). camera position just for loudness.
+            AudioSource.PlayClipAtPoint(_clip, Camera.main.transform.position, 1f);
+
             //Destroy self
             Destroy(this.gameObject);
         }

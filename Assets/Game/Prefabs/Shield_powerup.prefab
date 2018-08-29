@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 212613403166911162}
   - component: {fileID: 114436190115869974}
   - component: {fileID: 61074203770058844}
+  - component: {fileID: 95677090143218622}
   m_Layer: 0
   m_Name: Shield_powerup
   m_TagString: Untagged
@@ -67,6 +68,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.8869379, y: 3.8869379}
   m_EdgeRadius: 0
+--- !u!95 &95677090143218622
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1668058794669760}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ec4e320b4926f4c428ac37fca80b9230, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &114436190115869974
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -80,6 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerupID: 2
   speed: 3
+  _clip: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
 --- !u!212 &212613403166911162
 SpriteRenderer:
   m_ObjectHideFlags: 1
