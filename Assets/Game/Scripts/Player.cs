@@ -6,12 +6,18 @@ public class Player : MonoBehaviour {
 
     [SerializeField]
 	private GameObject _laserPrefab;
+
     [SerializeField]
     private GameObject _tripleLaserPrefab;
+
     [SerializeField]
     private GameObject _playerExplosionPrefab;
+
     [SerializeField]
     private GameObject _ShieldGameObject;
+
+    [SerializeField]
+    private GameObject[] _engine;
 
     [SerializeField]
     private float _fireRate = 0.2f;
@@ -170,7 +176,13 @@ public class Player : MonoBehaviour {
         lives--;
         _UIManager.UpdateLives(lives); // update live count on screen
 
-        if (lives < 1)
+        if (lives == 2) {
+            _engine[0].SetActive(true);
+        }
+        else if (lives == 1) {
+            _engine[1].SetActive(true);
+        }
+        else if (lives < 1)
         {
             if (_gameManager != null)
             {
@@ -180,6 +192,5 @@ public class Player : MonoBehaviour {
             Instantiate(_playerExplosionPrefab, transform.position, Quaternion.identity); // explode player
             Destroy(this.gameObject);
         }
-
     }
 }
