@@ -15,7 +15,7 @@ public class Player : MonoBehaviour {
 
     [SerializeField]
     private float _fireRate = 0.2f;
-    [SerializeField] // Allows designer to change speed in Unity, while keeping it private to player (no other script can interfere with it)
+    [SerializeField] // Lets us change variable in Unity, but no other script can interfere with it
     private float _speed = 5.0f;
 
     private float _canFire = 0;
@@ -23,9 +23,31 @@ public class Player : MonoBehaviour {
     public bool hasShield = false;
     public int lives = 3;
 
+    private UIManager _UIManager; // To hold connection to uimanager script
+    private GameManager _gameManager;
+    private SpawnManager _spawnManager;
+
 	// Use this for initialization
 	void Start () {
 		transform.position = new Vector3(0, 0, 0);
+
+        // Find the object that holds the UIManager (canvas) and get access to
+        // its UIManager script. Etc.
+        _UIManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+
+        _gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+
+        _spawnManager = GameObject.Find("Spawn Manager").GetComponent<SpawnManager>();
+
+        if (_UIManager != null) // Always null check, to not crash of unable to find object
+        {
+            _UIManager.UpdateLives(lives);
+        }
+
+        if (_spawnManager != null) {
+            _spawnManager.startSpawning();
+        }
+
 	}
 	
 	// Update is called once per frame
@@ -80,7 +102,8 @@ public class Player : MonoBehaviour {
 
     }
 
-    // Turn of powerup after 5 seconds
+    // Turn of powerup after 5 seconds. IEnumerator and yield return are always
+    // needed in coroutines. The routine gets started elsewhere (in powerupon)
     IEnumerator PowerDownRoutine(int powerupID)
     {
         yield return new WaitForSeconds(5.0f);
@@ -138,9 +161,16 @@ public class Player : MonoBehaviour {
         }
 
         lives--;
+        _UIManager.UpdateLives(lives); // update live count on screen
+
         if (lives < 1)
         {
-            Instantiate(_playerExplosionPrefab, transform.position, Quaternion.identity);
+            if (_gameManager != null)
+            {
+                _gameManager.gameOver = true;
+            }
+
+            Instantiate(_playerExplosionPrefab, transform.position, Quaternion.identity); // explode player
             Destroy(this.gameObject);
         }
 

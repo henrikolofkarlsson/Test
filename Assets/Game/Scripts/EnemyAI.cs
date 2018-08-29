@@ -10,9 +10,11 @@ public class EnemyAI : MonoBehaviour {
     [SerializeField]
     private GameObject _explosionPrefab;
 
+    private UIManager _UIManager;
+
 	// Use this for initialization
 	void Start () {
-		
+        _UIManager = GameObject.Find("Canvas").GetComponent<UIManager>();
 	}
 	
 	// Update is called once per frame
@@ -27,28 +29,32 @@ public class EnemyAI : MonoBehaviour {
         }
 	}
 
+    // Handles collisions
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Player") {
             Player player = other.GetComponent<Player>();
 
-            if (player != null)
+            if (player != null) // null check
             {
-                player.Damage();
+                player.Damage(); // if enemy collides with player, damage player
             }
 
+            // play explosion animation and destroy enemy object
             Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
             Destroy(this.gameObject);
         }
 
         else if (other.tag == "Laser") {
-            if (other.transform.parent != null)
+            if (other.transform.parent != null) // if laser has a parent, destroy it not to clutter memory
             {
                 Destroy(other.transform.parent.gameObject);
             }
-            Destroy(other.gameObject);
+            Destroy(other.gameObject); // destroy laser
 
+            // play explosion, increment score and destroy enemy object
             Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+            _UIManager.UpdateScore();
             Destroy(this.gameObject);
         }
     }
